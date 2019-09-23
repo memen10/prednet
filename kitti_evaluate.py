@@ -24,10 +24,14 @@ n_plot = 40
 batch_size = 10
 nt = 10
 
-weights_file = os.path.join(WEIGHTS_DIR, 'tensorflow_weights/prednet_kitti_weights.hdf5')
+# weights_file = os.path.join(WEIGHTS_DIR, 'tensorflow_weights/prednet_kitti_weights.hdf5')
+weights_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_weights.hdf5')
 json_file = os.path.join(WEIGHTS_DIR, 'prednet_kitti_model.json')
-test_file = os.path.join(DATA_DIR, 'X_test.hkl')
-test_sources = os.path.join(DATA_DIR, 'sources_test.hkl')
+# test_file = os.path.join(DATA_DIR, 'X_test.hkl')
+# test_sources = os.path.join(DATA_DIR, 'sources_test.hkl')
+
+test_file = os.path.join(DATA_DIR, 'X_val.hkl')
+test_sources = os.path.join(DATA_DIR, 'sources_val.hkl')
 
 # Load trained model
 f = open(json_file, 'r')
@@ -73,13 +77,21 @@ if not os.path.exists(plot_save_dir): os.mkdir(plot_save_dir)
 plot_idx = np.random.permutation(X_test.shape[0])[:n_plot]
 for i in plot_idx:
     for t in range(nt):
+        print(X_test[i,t])
+        print(X_test[i,t].shape)
+        print(np.reshape(X_test[i,t],(128, 160)).shape)
+
         plt.subplot(gs[t])
-        plt.imshow(X_test[i,t], interpolation='none')
+        # plt.imshow(X_test[i,t], interpolation='none')
+        # plt.imshow(X_test[i,t], interpolation='none', cmap='gray')
+        plt.imshow(np.reshape(X_test[i,t],(128, 160)), interpolation='none', cmap='gray')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Actual', fontsize=10)
 
         plt.subplot(gs[t + nt])
-        plt.imshow(X_hat[i,t], interpolation='none')
+        # plt.imshow(X_hat[i,t], interpolation='none')
+        # plt.imshow(X_hat[i,t], interpolation='none',cmap='gray')
+        plt.imshow(np.reshape(X_test[i,t],(128, 160)), interpolation='none',cmap='gray')
         plt.tick_params(axis='both', which='both', bottom='off', top='off', left='off', right='off', labelbottom='off', labelleft='off')
         if t==0: plt.ylabel('Predicted', fontsize=10)
 

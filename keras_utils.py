@@ -1,4 +1,6 @@
 import os
+from imp import reload
+
 import numpy as np
 
 from keras import backend as K
@@ -22,6 +24,7 @@ legacy_prednet_support = generate_legacy_interface(
 def convert_model_to_keras2(old_json_file, old_weights_file, new_json_file, new_weights_file):
     from prednet import PredNet
     # If using tensorflow, it doesn't allow you to load the old weights.
+    backend = 'tensorflow'
     if K.backend() != 'theano':
         os.environ['KERAS_BACKEND'] = backend
         reload(K)
@@ -29,7 +32,7 @@ def convert_model_to_keras2(old_json_file, old_weights_file, new_json_file, new_
     f = open(old_json_file, 'r')
     json_string = f.read()
     f.close()
-    model = model_from_json(json_string, custom_objects = {'PredNet': PredNet})
+    model = model_from_json(json_string, custom_objects = {'PredNet': PredNet,"backend": backend})
     model.load_weights(old_weights_file)
 
     weights = model.layers[1].get_weights()
@@ -46,8 +49,8 @@ def convert_model_to_keras2(old_json_file, old_weights_file, new_json_file, new_
 
 
 if __name__ == '__main__':
-    old_dir = './model_data/'
-    new_dir = './model_data_keras2/'
+    old_dir = '/media/diyosko7/HDD2.0T/PredNet/model_data/'
+    new_dir = '/media/diyosko7/HDD2.0T/PredNet/model_data_keras2/'
     if not os.path.exists(new_dir):
         os.mkdir(new_dir)
     for w_tag in ['', '-Lall', '-extrapfinetuned']:

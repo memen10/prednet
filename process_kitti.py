@@ -14,7 +14,9 @@ from kitti_settings import *
 
 
 desired_im_sz = (128, 160)
-categories = ['city', 'residential', 'road']
+# categories = ['city', 'residential', 'road']
+categories = ['city']
+
 
 # Recordings used for validation and testing.
 # Were initially chosen randomly such that one of the city recordings was used for validation and one of each category was used for testing.
@@ -71,9 +73,15 @@ def process_data():
         source_list = []  # corresponds to recording that image came from
         for category, folder in splits[split]:
             im_dir = os.path.join(DATA_DIR, 'raw/', category, folder, folder[:10], folder, 'image_03/data/')
-            files = list(os.walk(im_dir, topdown=False))[-1][-1]
-            im_list += [im_dir + f for f in sorted(files)]
-            source_list += [category + '-' + folder] * len(files)
+            print(list(os.walk(im_dir, topdown=False)))
+
+            try:
+                files = list(os.walk(im_dir, topdown=False))[-1][-1]
+                im_list += [im_dir + f for f in sorted(files)]
+                source_list += [category + '-' + folder] * len(files)
+            except:
+                print("!!!exception!!!")
+                continue
 
         print( 'Creating ' + split + ' data: ' + str(len(im_list)) + ' images')
         X = np.zeros((len(im_list),) + desired_im_sz + (3,), np.uint8)
@@ -95,6 +103,6 @@ def process_im(im, desired_sz):
 
 
 if __name__ == '__main__':
-    download_data()
-    extract_data()
+    # download_data()
+    # extract_data()
     process_data()
